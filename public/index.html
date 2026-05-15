@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stock Intelligence</title>
+    <link rel="icon" type="image/png" href="/assets/faune-favicon.png">
+    <link rel="apple-touch-icon" href="/assets/faune-favicon.png">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-logo" src="./assets/faune-logo.png" alt="Faune">
+        <div>
+          <strong>Stock Intelligence</strong>
+          <span>Shopify range dashboard</span>
+        </div>
+      </div>
+      <nav id="reportNav" class="nav"></nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Spreadsheet prototype</p>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="actions">
+          <label class="search">
+            <span>Search</span>
+            <input id="searchInput" type="search" placeholder="SKU, product, colour, size">
+          </label>
+          <div class="header-buttons">
+            <button id="syncBtn" class="button" type="button" title="Run Shopify sync now">Sync</button>
+            <button id="exportBtn" class="button" type="button" title="Export current table to CSV">Export CSV</button>
+          </div>
+          <div id="syncStatus" class="sync-status">Checking sync...</div>
+        </div>
+      </header>
+
+      <section id="kpis" class="kpis" aria-label="Key metrics"></section>
+
+      <section class="workspace">
+        <div class="toolbar">
+        <div>
+          <h2 id="sectionTitle">Report</h2>
+          <p id="sectionMeta"></p>
+          <button id="clearStockFilter" class="filter-pill" type="button" hidden></button>
+        </div>
+          <div class="filters">
+            <label>
+              Segment
+              <select id="segmentFilter">
+                <option value="">All</option>
+                <option value="WOMENS">Womens</option>
+                <option value="KIDS">Kids</option>
+              </select>
+            </label>
+            <label>
+              Stock
+              <select id="stockFilter">
+                <option value="">All</option>
+                <option value="in">In stock</option>
+                <option value="out">Out of stock</option>
+                <option value="low">Low stock</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

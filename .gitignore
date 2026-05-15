@@ -1,0 +1,6 @@
+.env
+data/shopify-raw/
+data/*.csv
+*.xlsx
+__pycache__/
+*.pyc

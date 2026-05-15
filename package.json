@@ -1,0 +1,11 @@
+{
+  "name": "shopify-stock-intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "python3 server.py",
+    "import:csv": "python3 scripts/build-data-from-csv.py",
+    "sync:shopify": "python3 scripts/sync-shopify.py",
+    "build": "node -e \"console.log('Static app: no build step required')\""
+  }
+}
