@@ -43,7 +43,7 @@ Do not set `PORT` on Railway. Railway provides it automatically.
 The app runs:
 
 ```bash
-npm run dev
+python3 server.py
 ```
 
 The server:

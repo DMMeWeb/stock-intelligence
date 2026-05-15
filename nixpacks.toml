@@ -1,5 +1,2 @@
-[phases.setup]
-nixPkgs = ["python312", "nodejs_20"]
-
 [start]
-cmd = "npm run dev"
+cmd = "python3 server.py"
