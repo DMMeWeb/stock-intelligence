@@ -220,13 +220,19 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/login":
             length = int(self.headers.get("Content-Length", "0"))
             body = self.rfile.read(length).decode("utf-8")
-            password = parse_qs(body).get("password", [""])[0]
-            if password and hmac.compare_digest(password, env("APP_PASSWORD", "")):
+            password = parse_qs(body).get("password", [""])[0].strip()
+            configured_password = env("APP_PASSWORD", "")
+            if password and hmac.compare_digest(password, configured_password):
                 self.send_response(303)
                 self.send_header("Location", "/")
                 self.send_header("Set-Cookie", f"stock_session={session_value()}; Path=/; HttpOnly; SameSite=Lax")
                 self.end_headers()
                 return
+            print(
+                f"Login failed. APP_PASSWORD set={bool(configured_password)} "
+                f"configured_length={len(configured_password)} submitted_length={len(password)}",
+                flush=True,
+            )
             return self.send_login("Incorrect password.")
 
         if not self.is_authenticated():
@@ -289,6 +295,10 @@ def main():
     server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
     print(f"Stock Intelligence running on 0.0.0.0:{port}", flush=True)
     print(f"Next Shopify sync: {get_status()['nextRunAt']}", flush=True)
+    print(
+        f"APP_PASSWORD configured={bool(env('APP_PASSWORD'))} length={len(env('APP_PASSWORD'))}",
+        flush=True,
+    )
     server.serve_forever()
 
 
