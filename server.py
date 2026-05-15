@@ -11,13 +11,16 @@ from http import cookies
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs
-from zoneinfo import ZoneInfo
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    ZoneInfo = None
 
 
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / "public"
 ENV_PATH = ROOT / ".env"
-LONDON = ZoneInfo("Europe/London")
+LONDON = ZoneInfo("Europe/London") if ZoneInfo else None
 
 STATUS = {
     "running": False,
@@ -46,7 +49,7 @@ def env(name, default=""):
 
 
 def now_london():
-    return datetime.now(LONDON)
+    return datetime.now(LONDON) if LONDON else datetime.now()
 
 
 def iso_london(dt):
@@ -54,7 +57,10 @@ def iso_london(dt):
 
 
 def next_sync_time():
-    hour_text, minute_text = env("SYNC_TIME", "08:00").split(":", 1)
+    sync_time = env("SYNC_TIME", "08:00")
+    if ":" not in sync_time:
+        sync_time = "08:00"
+    hour_text, minute_text = sync_time.split(":", 1)
     now = now_london()
     target = now.replace(hour=int(hour_text), minute=int(minute_text), second=0, microsecond=0)
     if target <= now:
@@ -268,14 +274,21 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     load_env()
-    update_status(nextRunAt=iso_london(next_sync_time()))
-    threading.Thread(target=scheduler_loop, daemon=True).start()
+    try:
+        update_status(nextRunAt=iso_london(next_sync_time()))
+        threading.Thread(target=scheduler_loop, daemon=True).start()
+    except Exception as exc:
+        update_status(lastMessage=f"Scheduler failed to start: {exc}")
+        print(f"Scheduler failed to start: {exc}", flush=True)
     if env("SYNC_ON_STARTUP", "").lower() in {"1", "true", "yes"}:
         threading.Thread(target=run_sync, daemon=True).start()
-    port = int(env("PORT", "4173"))
+    try:
+        port = int(env("PORT", "4173"))
+    except ValueError:
+        port = 4173
     server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
-    print(f"Stock Intelligence running at http://localhost:{port}")
-    print(f"Next Shopify sync: {get_status()['nextRunAt']}")
+    print(f"Stock Intelligence running on 0.0.0.0:{port}", flush=True)
+    print(f"Next Shopify sync: {get_status()['nextRunAt']}", flush=True)
     server.serve_forever()
 
 
