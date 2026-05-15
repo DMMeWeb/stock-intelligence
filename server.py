@@ -283,9 +283,9 @@ def main():
     if env("SYNC_ON_STARTUP", "").lower() in {"1", "true", "yes"}:
         threading.Thread(target=run_sync, daemon=True).start()
     try:
-        port = int(env("PORT", "4173"))
+        port = int(env("PORT", "8080"))
     except ValueError:
-        port = 4173
+        port = 8080
     server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
     print(f"Stock Intelligence running on 0.0.0.0:{port}", flush=True)
     print(f"Next Shopify sync: {get_status()['nextRunAt']}", flush=True)

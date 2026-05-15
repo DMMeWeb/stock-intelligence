@@ -39,6 +39,7 @@ SYNC_ON_STARTUP=true
 ```
 
 Do not set `PORT` on Railway. Railway provides it automatically.
+If Railway asks for a public networking target port, use `8080`.
 
 The app runs:
 
